@@ -94,8 +94,8 @@ export default function ProductPage() {
     
     try {
       // Try using Salla SDK first (for storefront integration)
-      if (typeof window !== 'undefined' && (window as any).salla) {
-        const salla = (window as any).salla;
+      if (typeof window !== 'undefined' && (window as unknown as { salla?: unknown }).salla) {
+        const salla = (window as unknown as { salla: { cart: { addItem: (options: Record<string, unknown>) => Promise<unknown>; event: { onItemAdded: (callback: (response: unknown) => void) => void; onItemAddedFailed: (callback: (error: unknown) => void) => void } } } }).salla;
         
         const response = await salla.cart.addItem({
           id: product.id,
@@ -107,11 +107,12 @@ export default function ProductPage() {
         alert('Product added to cart successfully!');
         
         // Set up event listeners for cart events
-        salla.cart.event.onItemAdded((response: unknown, product_id: number) => {
-          console.log('Item added to cart:', response, product_id);
+        salla.cart.event.onItemAdded((response: unknown) => {
+          console.log('Item added to cart:', response);
         });
         
-        salla.cart.event.onItemAddedFailed((errorMessage: string) => {
+        salla.cart.event.onItemAddedFailed((error: unknown) => {
+          const errorMessage = typeof error === 'string' ? error : 'Unknown error';
           console.error('Failed to add item to cart:', errorMessage);
           alert('Failed to add item to cart: ' + errorMessage);
         });

@@ -25,7 +25,7 @@ export function FloatingDock({ items, className }: FloatingDockProps) {
         className
       )}
     >
-      {items.map((item, _) => (
+      {items.map((item) => (
         <motion.button
           key={item.title}
           whileHover={{ scale: 1.1 }}
