@@ -24,6 +24,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl" className="dark">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(s,a,l,l,a){
+                a=s.createElement('script');l=s.scripts[0];
+                a.async=1;a.src='https://cdn.salla.network/stores/twilight/js/salla.min.js';
+                a.onload=function(){salla.init()};
+                l.parentNode.insertBefore(a,l);
+              })(document);
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >

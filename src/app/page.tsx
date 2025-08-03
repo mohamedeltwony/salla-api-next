@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { AnimatedCard } from "@/components/ui/animated-card";
+import Link from "next/link";
 
 import { FloatingDock } from "@/components/ui/floating-dock";
 import { ProductsGrid } from "@/components/ui/products-grid";
@@ -10,12 +11,12 @@ import { ShoppingCart, Store, Package, Settings, Home as HomeIcon, User } from "
 
 export default function Home() {
   const dockItems = [
-    { title: "الرئيسية", icon: <HomeIcon className="w-5 h-5" /> },
-    { title: "المتجر", icon: <Store className="w-5 h-5" /> },
-    { title: "المنتجات", icon: <Package className="w-5 h-5" /> },
-    { title: "السلة", icon: <ShoppingCart className="w-5 h-5" /> },
-    { title: "الملف الشخصي", icon: <User className="w-5 h-5" /> },
-    { title: "الإعدادات", icon: <Settings className="w-5 h-5" /> },
+    { title: "الرئيسية", icon: <HomeIcon className="w-5 h-5" />, href: "/" },
+    { title: "المتجر", icon: <Store className="w-5 h-5" />, href: "/" },
+    { title: "المنتجات", icon: <Package className="w-5 h-5" />, href: "/" },
+    { title: "السلة", icon: <ShoppingCart className="w-5 h-5" />, href: "/cart" },
+    { title: "الملف الشخصي", icon: <User className="w-5 h-5" />, href: "/" },
+    { title: "الإعدادات", icon: <Settings className="w-5 h-5" />, href: "/" },
   ];
 
   return (
@@ -56,6 +57,12 @@ export default function Home() {
             <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary/10">
               عرض الوثائق
             </Button>
+            <Link href="/cart">
+              <Button variant="outline" size="lg" className="border-accent text-accent hover:bg-accent/10">
+                <ShoppingCart className="w-5 h-5 ml-2" />
+                سلة التسوق
+              </Button>
+            </Link>
           </motion.div>
         </motion.div>
 

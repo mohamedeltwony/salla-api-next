@@ -85,12 +85,66 @@ export default function ProductPage() {
   };
 
   const handleAddToCart = async () => {
+    if (!product) {
+      alert('Product information is not available.');
+      return;
+    }
+    
     setIsAddingToCart(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsAddingToCart(false);
-    // Here you would typically call your cart API
-    console.log(`Added ${quantity} of product ${productId} to cart`);
+    
+    try {
+      // Try using Salla SDK first (for storefront integration)
+      if (typeof window !== 'undefined' && (window as any).salla) {
+        const salla = (window as any).salla;
+        
+        const response = await salla.cart.addItem({
+          id: product.id,
+          quantity: quantity,
+          notes: "Added from product page"
+        });
+        
+        console.log('Product added to cart successfully via SDK:', response);
+        alert('Product added to cart successfully!');
+        
+        // Set up event listeners for cart events
+        salla.cart.event.onItemAdded((response: any, product_id: number) => {
+          console.log('Item added to cart:', response, product_id);
+        });
+        
+        salla.cart.event.onItemAddedFailed((errorMessage: string) => {
+          console.error('Failed to add item to cart:', errorMessage);
+          alert('Failed to add item to cart: ' + errorMessage);
+        });
+      } else {
+        // Fallback to server-side API
+        console.log('Salla SDK not available, using server-side API');
+        
+        const response = await fetch('/api/cart', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            product_id: product.id,
+            quantity: quantity,
+          }),
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to add product to cart');
+        }
+        
+        const result = await response.json();
+        console.log('Product added to cart successfully via API:', result);
+        alert('Product added to cart successfully!');
+      }
+    } catch (error) {
+      console.error('Failed to add product to cart:', error);
+      alert('Failed to add product to cart. Please try again.');
+    } finally {
+      setIsAddingToCart(false);
+    }
   };
 
   if (loading) {
