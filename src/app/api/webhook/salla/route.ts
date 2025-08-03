@@ -81,14 +81,14 @@ export async function GET(request: NextRequest) {
       const requestBody = new URLSearchParams({
         grant_type: 'authorization_code',
         code: code,
-        client_id: process.env.SALLA_CLIENT_ID!,
+        client_id: process.env.NEXT_PUBLIC_SALLA_CLIENT_ID || process.env.SALLA_CLIENT_ID!,
         client_secret: process.env.SALLA_CLIENT_SECRET!,
         redirect_uri: process.env.SALLA_REDIRECT_URI!,
       });
       console.log('📤 Token request body:', {
         grant_type: 'authorization_code',
         code: code,
-        client_id: process.env.SALLA_CLIENT_ID,
+        client_id: process.env.NEXT_PUBLIC_SALLA_CLIENT_ID || process.env.SALLA_CLIENT_ID,
         client_secret: '[HIDDEN]',
         redirect_uri: process.env.SALLA_REDIRECT_URI,
       });
