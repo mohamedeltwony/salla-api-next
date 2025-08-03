@@ -76,19 +76,25 @@ export async function GET(request: NextRequest) {
     
     try {
       console.log('🔄 Exchanging authorization code for tokens...');
-      const requestBody = {
+      const requestBody = new URLSearchParams({
+        grant_type: 'authorization_code',
+        code: code,
+        client_id: process.env.SALLA_CLIENT_ID!,
+        client_secret: process.env.SALLA_CLIENT_SECRET!,
+        redirect_uri: process.env.SALLA_REDIRECT_URI!,
+      });
+      console.log('📤 Token request body:', {
         grant_type: 'authorization_code',
         code: code,
         client_id: process.env.SALLA_CLIENT_ID,
-        client_secret: process.env.SALLA_CLIENT_SECRET,
+        client_secret: '[HIDDEN]',
         redirect_uri: process.env.SALLA_REDIRECT_URI,
-      };
-      console.log('📤 Token request body:', { ...requestBody, client_secret: '[HIDDEN]' });
+      });
       
       const tokenResponse = await fetch('https://accounts.salla.sa/oauth2/token', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody),
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: requestBody.toString(),
       });
 
       console.log(`🚦 Token exchange response status: ${tokenResponse.status}`);
