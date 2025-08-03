@@ -6,6 +6,8 @@ import { SallaProduct } from "@/services/salla-api";
 import { ShoppingCart, Eye } from "lucide-react";
 import { Button } from "./button";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface ProductCardProps {
   product: SallaProduct;
@@ -14,6 +16,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, className, delay = 0 }: ProductCardProps) {
+  const router = useRouter();
   const hasDiscount = product.sale_price && product.sale_price.amount < product.price.amount;
   const discountPercentage = hasDiscount 
     ? Math.round(((product.price.amount - product.sale_price!.amount) / product.price.amount) * 100)
@@ -24,6 +27,10 @@ export function ProductCard({ product, className, delay = 0 }: ProductCardProps)
       style: 'currency',
       currency: price.currency || 'SAR',
     }).format(price.amount);
+  };
+
+  const handleViewProduct = () => {
+    router.push(`/product/${product.id}`);
   };
 
   return (
@@ -64,9 +71,14 @@ export function ProductCard({ product, className, delay = 0 }: ProductCardProps)
         
         {/* Quick Actions */}
         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2">
-          <Button size="sm" variant="secondary" className="bg-background/90 hover:bg-background">
+          <Button 
+            size="sm" 
+            variant="secondary" 
+            className="bg-background/90 hover:bg-background"
+            onClick={handleViewProduct}
+          >
             <Eye className="w-4 h-4 ml-2" />
-            عرض سريع
+            عرض المنتج
           </Button>
           <Button size="sm" className="bg-primary hover:bg-primary/90">
             <ShoppingCart className="w-4 h-4 ml-2" />
@@ -77,7 +89,10 @@ export function ProductCard({ product, className, delay = 0 }: ProductCardProps)
       
       {/* Product Info */}
       <div className="p-4">
-        <h3 className="font-semibold text-lg mb-2 line-clamp-2 text-foreground group-hover:text-primary transition-colors">
+        <h3 
+          className="font-semibold text-lg mb-2 line-clamp-2 text-foreground group-hover:text-primary transition-colors cursor-pointer"
+          onClick={handleViewProduct}
+        >
           {product.name}
         </h3>
         
