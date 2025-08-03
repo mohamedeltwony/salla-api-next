@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { AnimatedCard } from "@/components/ui/animated-card";
-import { Shimmer } from "@/components/ui/shimmer";
+
 import { FloatingDock } from "@/components/ui/floating-dock";
 import { ProductsGrid } from "@/components/ui/products-grid";
 import { ShoppingCart, Store, Package, Settings, Home as HomeIcon, User } from "lucide-react";

@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { ProductCard } from "./product-card";
 import { Shimmer } from "./shimmer";
 import { Button } from "./button";
-import { sallaApi, SallaProduct } from "@/services/salla-api";
+import { SallaProduct } from "@/services/salla-api";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 
