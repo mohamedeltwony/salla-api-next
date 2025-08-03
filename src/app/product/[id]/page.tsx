@@ -107,7 +107,7 @@ export default function ProductPage() {
         alert('Product added to cart successfully!');
         
         // Set up event listeners for cart events
-        salla.cart.event.onItemAdded((response: any, product_id: number) => {
+        salla.cart.event.onItemAdded((response: unknown, product_id: number) => {
           console.log('Item added to cart:', response, product_id);
         });
         
@@ -131,7 +131,7 @@ export default function ProductPage() {
         });
         
         if (!response.ok) {
-          const errorData = await response.json();
+          const errorData = await response.json() as { error?: string };
           throw new Error(errorData.error || 'Failed to add product to cart');
         }
         

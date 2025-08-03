@@ -96,7 +96,7 @@ class SallaCartService {
   }
 
   // Add item to cart
-  async addToCart(productId: number, quantity: number, options?: any): Promise<SallaApiResponse<SallaCart>> {
+  async addToCart(productId: number, quantity: number, options?: Record<string, unknown>): Promise<SallaApiResponse<SallaCart>> {
     return this.makeRequest<SallaCart>('/cart/items', {
       method: 'POST',
       body: JSON.stringify({
