@@ -67,20 +67,43 @@ export default function Home() {
         </motion.div>
 
         {/* Configuration Warning */}
-        <div className="mb-8 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+        <div className="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-yellow-500">⚠️</span>
-            <h3 className="text-lg font-semibold text-yellow-500">تكوين المتجر مطلوب</h3>
+            <span className="text-red-500">🚨</span>
+            <h3 className="text-lg font-semibold text-red-500">خطأ في المصادقة - مطلوب إعداد فوري</h3>
           </div>
           <p className="text-sm text-muted-foreground mb-2">
-            يستخدم هذا التطبيق بيانات تجريبية. لاختبار وظائف السلة الحقيقية، يرجى:
+            <strong>المشكلة:</strong> "Authentication failed: No valid access token available"
           </p>
-          <ol className="text-sm text-muted-foreground list-decimal list-inside space-y-1">
-            <li>إنشاء حساب في <a href="https://salla.partners" target="_blank" className="text-blue-400 hover:underline">بوابة شركاء سلة</a></li>
-            <li>إنشاء تطبيق ومتجر تجريبي</li>
-            <li>تحديث ملف <code className="bg-gray-800 px-1 rounded">.env.local</code> ببيانات المتجر الحقيقية</li>
-            <li>مراجعة <code className="bg-gray-800 px-1 rounded">SALLA_SDK_SETUP_GUIDE.md</code> للتعليمات التفصيلية</li>
-          </ol>
+          <p className="text-sm text-muted-foreground mb-2">
+            <strong>السبب:</strong> لم يتم تكوين بيانات الاعتماد الحقيقية أو إكمال تدفق OAuth
+          </p>
+          
+          <div className="mt-4 p-3 bg-red-500/20 rounded">
+            <p className="text-sm font-semibold text-red-500 mb-2">الحل الفوري:</p>
+            <ol className="text-sm text-muted-foreground list-decimal list-inside space-y-1">
+              <li>احصل على بيانات اعتماد سلة الحقيقية من <a href="https://salla.partners/" target="_blank" className="text-blue-400 hover:underline">بوابة الشركاء</a></li>
+              <li>أعد تكوين قاعدة بيانات Redis في <a href="https://upstash.com" target="_blank" className="text-blue-400 hover:underline">Upstash</a></li>
+              <li>حدث ملف <code className="bg-gray-800 px-1 rounded">.env.local</code> بالقيم الحقيقية</li>
+              <li>أكمل تدفق OAuth في <code className="bg-gray-800 px-1 rounded">/auth/salla</code></li>
+            </ol>
+          </div>
+          
+          <div className="mt-4">
+            <a 
+              href="/SALLA_SDK_SETUP_GUIDE.md" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="inline-block bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors text-sm"
+            >
+              📖 دليل الإصلاح الفوري
+            </a>
+          </div>
+          
+          <div className="mt-4 p-3 bg-red-500/20 rounded">
+            <p className="text-sm font-semibold text-red-500">الحالة الحالية:</p>
+            <p className="text-sm text-muted-foreground">🔴 بيانات اعتماد وهمية - مطلوب تكوين حقيقي للعمل</p>
+          </div>
         </div>
 
         {/* Features Grid */}

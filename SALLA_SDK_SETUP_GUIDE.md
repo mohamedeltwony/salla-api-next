@@ -109,15 +109,25 @@ NEXT_PUBLIC_SALLA_API_URL=https://api.salla.dev/admin/v2
 ### Issue 3: Cart operations failing
 **Solution**: ✅ **FIXED** - Now uses proper Salla SDK integration
 
-### Issue 4: "Network Error" when adding to cart
-**Problem**: Using example store credentials (`demo-store.salla.sa`) that don't exist or aren't configured for your domain
+### Issue 4: "Authentication Failed - No Valid Access Token"
+**Problem**: Using placeholder credentials and no OAuth flow completed
 **Solution**: 
-1. **Create Real Demo Store**: Follow Step 2 above to create an actual demo store
-2. **Update Environment Variables**: Replace example values with real store URL and ID
-3. **Domain Configuration**: Ensure your domain is authorized in the Salla app settings
+1. **Update Salla API Credentials**: Replace placeholder values with real credentials from Salla Partners Portal
+2. **Configure Token Storage**: Set up Upstash Redis or Vercel KV for token storage
+3. **Complete OAuth Flow**: Visit `/auth/salla` to authorize and get access tokens
+4. **Update Store Configuration**: Use real demo store details
 
-**Example of correct configuration after creating demo store:**
+**Critical Steps:**
 ```env
+# Replace with REAL Salla app credentials
+SALLA_CLIENT_ID=your_real_client_id_from_salla_partners
+SALLA_CLIENT_SECRET=your_real_client_secret_from_salla_partners
+
+# Configure token storage (choose one)
+UPSTASH_REDIS_REST_URL=https://your-redis-url.upstash.io
+UPSTASH_REDIS_REST_TOKEN=your_redis_token
+
+# Use real store details
 NEXT_PUBLIC_SALLA_STORE_ID=your_actual_demo_store_id
 NEXT_PUBLIC_SALLA_STORE_URL=https://your-actual-demo-store-name.salla.sa
 ```
@@ -141,6 +151,59 @@ NEXT_PUBLIC_SALLA_STORE_URL=https://your-actual-demo-store-name.salla.sa
    - Test cart operations with customer authentication
    - Verify all functionality works end-to-end
 
+## 🔧 **IMMEDIATE FIX: Current Authentication Error**
+
+### You're seeing "Authentication failed: No valid access token available" - Here's how to fix it:
+
+#### Step 1: Get Real Salla Credentials
+1. Go to [Salla Partners Portal](https://salla.partners/)
+2. Create/login to your account
+3. Create a new app or use existing one
+4. Copy your **Client ID** and **Client Secret**
+
+#### Step 2: Set Up Token Storage (Quick Option)
+1. Go to [Upstash](https://upstash.com)
+2. Sign up for free account
+3. Create a new Redis database
+4. Copy the **REST URL** and **REST TOKEN**
+
+#### Step 3: Update Your `.env.local` File
+Replace the placeholder values with your real credentials:
+```env
+# Replace these with your REAL Salla app credentials
+SALLA_CLIENT_ID=salla_your_real_client_id
+SALLA_CLIENT_SECRET=sk_your_real_client_secret
+SALLA_REDIRECT_URI=http://localhost:3000/auth/callback
+
+# Replace with your REAL Upstash Redis credentials
+UPSTASH_REDIS_REST_URL=https://your-database-name.upstash.io
+UPSTASH_REDIS_REST_TOKEN=AXXXyour_real_token
+
+# Keep these for now (will update after OAuth)
+NEXT_PUBLIC_SALLA_STORE_ID=1305146709
+NEXT_PUBLIC_SALLA_STORE_URL=https://demo-store.salla.sa
+```
+
+#### Step 4: Complete OAuth Flow
+1. Save your `.env.local` file
+2. Restart your development server: `npm run dev`
+3. Visit: `http://localhost:3000/auth/salla`
+4. Authorize your app with Salla
+5. You'll be redirected back with access tokens stored
+
+#### Step 5: Test the Application
+1. Visit `http://localhost:3000`
+2. You should now see real products loading
+3. Cart functionality will work with your authorized store
+
+### ⚠️ **Important Notes:**
+- **Don't skip the OAuth step** - this is what gets your access tokens
+- **Use real credentials** - placeholder values will never work
+- **Restart the server** after updating `.env.local`
+- **Check the console** for any remaining errors
+
+---
+
 ## 🔗 **Useful Resources**
 
 - [Salla Partners Portal](https://salla.partners)
@@ -148,6 +211,7 @@ NEXT_PUBLIC_SALLA_STORE_URL=https://your-actual-demo-store-name.salla.sa
 - [Twilight SDK Documentation](https://docs.salla.dev/doc-422610)
 - [OAuth2 Setup Guide](https://docs.salla.dev/doc-421117)
 - [Demo Store Testing](https://salla.dev/blog/how-to-test-your-app-using-salla-demo-stores/)
+- [Upstash Redis Setup](https://upstash.com)
 
 ## 💡 **Tips**
 
