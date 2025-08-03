@@ -69,25 +69,39 @@ export async function GET(request: NextRequest) {
   // OAuth2 callback handling
   if (code) {
     console.log('ℹ️ Received OAuth callback with authorization code.');
+    console.log('🔍 Environment variables check:');
+    console.log('SALLA_CLIENT_ID:', process.env.SALLA_CLIENT_ID ? '[SET]' : '[NOT SET]');
+    console.log('SALLA_CLIENT_SECRET:', process.env.SALLA_CLIENT_SECRET ? '[SET]' : '[NOT SET]');
+    console.log('SALLA_REDIRECT_URI:', process.env.SALLA_REDIRECT_URI || '[NOT SET]');
+    
     try {
       console.log('🔄 Exchanging authorization code for tokens...');
+      const requestBody = {
+        grant_type: 'authorization_code',
+        code: code,
+        client_id: process.env.SALLA_CLIENT_ID,
+        client_secret: process.env.SALLA_CLIENT_SECRET,
+        redirect_uri: process.env.SALLA_REDIRECT_URI,
+      };
+      console.log('📤 Token request body:', { ...requestBody, client_secret: '[HIDDEN]' });
+      
       const tokenResponse = await fetch('https://accounts.salla.sa/oauth2/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          grant_type: 'authorization_code',
-          code: code,
-          client_id: process.env.SALLA_CLIENT_ID,
-          client_secret: process.env.SALLA_CLIENT_SECRET,
-          redirect_uri: process.env.SALLA_REDIRECT_URI,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       console.log(`🚦 Token exchange response status: ${tokenResponse.status}`);
       if (!tokenResponse.ok) {
         const errorText = await tokenResponse.text();
-        console.error('❌ Token exchange failed:', errorText);
-        return NextResponse.json({ error: 'Failed to exchange authorization code for token' }, { status: 400 });
+        console.error('❌ Token exchange failed with status:', tokenResponse.status);
+        console.error('❌ Error response:', errorText);
+        console.error('❌ Response headers:', Object.fromEntries(tokenResponse.headers.entries()));
+        return NextResponse.json({ 
+          error: 'Failed to exchange authorization code for token',
+          details: errorText,
+          status: tokenResponse.status
+        }, { status: 400 });
       }
 
       const tokenData = await tokenResponse.json();
