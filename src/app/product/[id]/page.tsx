@@ -101,14 +101,21 @@ export default function ProductPage() {
     try {
       // Check if Salla SDK is available
       const hasSallaSDK = typeof window !== 'undefined' && (window as unknown as { salla?: unknown }).salla;
+      const isSDKReady = typeof window !== 'undefined' && (window as unknown as { sallaSDKReady?: boolean }).sallaSDKReady;
+      
       console.log('[DEBUG] Salla SDK availability:', {
         windowExists: typeof window !== 'undefined',
         sallaExists: hasSallaSDK,
+        sdkReady: isSDKReady,
         userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'N/A'
       });
       
       if (!hasSallaSDK) {
-        throw new Error('Salla SDK is required for cart operations. Please ensure the Salla Twilight SDK is properly loaded.');
+        throw new Error('Salla SDK غير محمل. يرجى التأكد من تحميل Salla Twilight SDK بشكل صحيح.');
+      }
+      
+      if (!isSDKReady) {
+        throw new Error('Salla SDK لا يزال يتم تهيئته. يرجى المحاولة مرة أخرى خلال ثوانٍ قليلة.');
       }
       
       console.log('[DEBUG] Using Salla SDK for cart operation');
@@ -128,7 +135,8 @@ export default function ProductPage() {
       
       const cartOptions = {
         id: product.id, // Use 'id' instead of 'product_id' for Salla SDK
-        quantity: quantity
+        quantity: quantity,
+        notes: "Added from product page"
       };
       console.log('[DEBUG] Calling salla.cart.addItem with options:', cartOptions);
       
