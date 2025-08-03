@@ -70,9 +70,11 @@ export async function GET(request: NextRequest) {
   if (code) {
     console.log('ℹ️ Received OAuth callback with authorization code.');
     console.log('🔍 Environment variables check:');
-    console.log('SALLA_CLIENT_ID:', process.env.SALLA_CLIENT_ID ? '[SET]' : '[NOT SET]');
-    console.log('SALLA_CLIENT_SECRET:', process.env.SALLA_CLIENT_SECRET ? '[SET]' : '[NOT SET]');
+    console.log('SALLA_CLIENT_ID:', process.env.SALLA_CLIENT_ID ? `[SET: ${process.env.SALLA_CLIENT_ID.substring(0, 8)}...]` : '[NOT SET]');
+    console.log('SALLA_CLIENT_SECRET:', process.env.SALLA_CLIENT_SECRET ? `[SET: ${process.env.SALLA_CLIENT_SECRET.substring(0, 8)}...]` : '[NOT SET]');
     console.log('SALLA_REDIRECT_URI:', process.env.SALLA_REDIRECT_URI || '[NOT SET]');
+    console.log('NEXT_PUBLIC_SALLA_CLIENT_ID:', process.env.NEXT_PUBLIC_SALLA_CLIENT_ID ? `[SET: ${process.env.NEXT_PUBLIC_SALLA_CLIENT_ID.substring(0, 8)}...]` : '[NOT SET]');
+    console.log('NEXT_PUBLIC_SALLA_REDIRECT_URI:', process.env.NEXT_PUBLIC_SALLA_REDIRECT_URI || '[NOT SET]');
     
     try {
       console.log('🔄 Exchanging authorization code for tokens...');
