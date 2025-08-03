@@ -50,6 +50,10 @@ class SallaCartService {
   private baseUrl: string;
 
   constructor() {
+    // Note: Cart operations should typically use Salla's storefront APIs, not admin APIs
+    // Admin API is for merchant store management, not customer cart operations
+    // For now, we'll create a mock implementation since cart operations require
+    // customer authentication and storefront context
     this.baseUrl = process.env.NEXT_PUBLIC_SALLA_API_URL || 'https://api.salla.dev/admin/v2';
   }
 
@@ -120,19 +124,81 @@ class SallaCartService {
 
   // Get current cart
   async getCart(): Promise<SallaApiResponse<SallaCart>> {
-    return this.makeRequest<SallaCart>('/cart');
+    console.log('[DEBUG] SallaCartService: Creating mock cart response for getCart');
+    
+    // Mock implementation for testing - real cart operations should use Salla SDK
+    const mockCart: SallaCart = {
+      id: 'mock-cart-empty',
+      items: [],
+      total: {
+        amount: 0,
+        currency: 'SAR'
+      },
+      items_count: 0,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    
+    console.log('[DEBUG] SallaCartService: Mock empty cart returned');
+    
+    return {
+      status: 200,
+      success: true,
+      data: mockCart
+    };
   }
 
   // Add item to cart
   async addToCart(productId: number, quantity: number, options?: Record<string, unknown>): Promise<SallaApiResponse<SallaCart>> {
-    return this.makeRequest<SallaCart>('/cart/items', {
-      method: 'POST',
-      body: JSON.stringify({
-        product_id: productId,
-        quantity,
-        options,
-      }),
-    });
+    console.log('[DEBUG] SallaCartService: Creating mock cart response for testing');
+    
+    // Mock implementation for testing - real cart operations should use Salla SDK
+    // This simulates a successful cart addition
+    const mockCartItem: SallaCartItem = {
+      id: Math.floor(Math.random() * 1000000),
+      product_id: productId,
+      product: {
+        id: productId,
+        name: `Product ${productId}`,
+        price: {
+          amount: 100,
+          currency: 'SAR'
+        },
+        images: [{
+          url: '/placeholder-product.jpg',
+          alt: 'Product Image'
+        }]
+      },
+      quantity: quantity,
+      price: {
+        amount: 100,
+        currency: 'SAR'
+      },
+      total: {
+        amount: 100 * quantity,
+        currency: 'SAR'
+      }
+    };
+    
+    const mockCart: SallaCart = {
+      id: 'mock-cart-' + Date.now(),
+      items: [mockCartItem],
+      total: {
+        amount: 100 * quantity,
+        currency: 'SAR'
+      },
+      items_count: 1,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    
+    console.log('[DEBUG] SallaCartService: Mock cart created successfully:', mockCart);
+    
+    return {
+      status: 200,
+      success: true,
+      data: mockCart
+    };
   }
 
   // Update cart item quantity
