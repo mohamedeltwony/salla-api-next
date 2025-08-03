@@ -8,11 +8,15 @@
     *   **App Name**: Give your application a descriptive name.
     *   **App Link**: This can be your project's URL or a placeholder.
 4.  Once the app is created, go to the **Credentials** tab. Here you will find your **Client ID** and **Client Secret**.
-5.  Go to the **App Settings** tab and configure the **Redirect URI**. This is the URL that Salla will redirect to after a user authorizes your app. For local development, this should be:
+5.  Go to the **App Settings** tab and configure the **Redirect URI**. This is the URL that Salla will redirect to after a user authorizes your app. For production, this should be:
+    ```
+    https://salla-test-app.vercel.app/api/webhook/salla
+    ```
+    For local development, use:
     ```
     http://localhost:3001/api/webhook/salla
     ```
-    > **Important**: This URL must exactly match the `SALLA_REDIRECT_URI` in your `.env.local` file.
+    > **Important**: This URL must exactly match the `SALLA_REDIRECT_URI` in your environment variables.
 
 ## 2. Configure Environment Variables
 
@@ -35,11 +39,11 @@ Your `.env.local` file should look like this:
 # Salla OAuth 2.0 Credentials
 SALLA_CLIENT_ID="your_client_id_here"
 SALLA_CLIENT_SECRET="your_client_secret_here"
-SALLA_REDIRECT_URI="http://localhost:3001/api/webhook/salla"
+SALLA_REDIRECT_URI="https://salla-test-app.vercel.app/api/webhook/salla"
 
 # Public variables (accessible on the client-side)
 NEXT_PUBLIC_SALLA_CLIENT_ID="your_client_id_here"
-NEXT_PUBLIC_SALLA_REDIRECT_URI="http://localhost:3001/api/webhook/salla"
+NEXT_PUBLIC_SALLA_REDIRECT_URI="https://salla-test-app.vercel.app/api/webhook/salla"
 
 # Vercel KV (Redis) Credentials
 KV_URL="..."
@@ -58,7 +62,7 @@ After configuring your environment variables, you need to authorize the applicat
 1.  **Restart your development server** to apply the new environment variables.
 2.  Open your browser and navigate to:
     ```
-    http://localhost:3001/auth
+    https://salla-test-app.vercel.app/auth
     ```
 3.  Click the **Authorize with Salla** button.
 4.  You will be redirected to Salla to log in and approve the requested permissions.
