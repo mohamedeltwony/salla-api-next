@@ -109,6 +109,19 @@ NEXT_PUBLIC_SALLA_API_URL=https://api.salla.dev/admin/v2
 ### Issue 3: Cart operations failing
 **Solution**: ✅ **FIXED** - Now uses proper Salla SDK integration
 
+### Issue 4: "Network Error" when adding to cart
+**Problem**: Using example store credentials (`demo-store.salla.sa`) that don't exist or aren't configured for your domain
+**Solution**: 
+1. **Create Real Demo Store**: Follow Step 2 above to create an actual demo store
+2. **Update Environment Variables**: Replace example values with real store URL and ID
+3. **Domain Configuration**: Ensure your domain is authorized in the Salla app settings
+
+**Example of correct configuration after creating demo store:**
+```env
+NEXT_PUBLIC_SALLA_STORE_ID=your_actual_demo_store_id
+NEXT_PUBLIC_SALLA_STORE_URL=https://your-actual-demo-store-name.salla.sa
+```
+
 ## 📚 **Next Steps**
 
 1. **Implement OAuth Authentication**

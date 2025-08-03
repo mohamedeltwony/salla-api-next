@@ -111,11 +111,11 @@ export default function ProductPage() {
       });
       
       if (!hasSallaSDK) {
-        throw new Error('Salla SDK غير محمل. يرجى التأكد من تحميل Salla Twilight SDK بشكل صحيح.');
+        throw new Error('Salla SDK غير محمل. يرجى إعداد متجر سلة حقيقي في ملف البيئة (.env.local). راجع SALLA_SDK_SETUP_GUIDE.md للتعليمات.');
       }
       
       if (!isSDKReady) {
-        throw new Error('Salla SDK لا يزال يتم تهيئته. يرجى المحاولة مرة أخرى خلال ثوانٍ قليلة.');
+        throw new Error('Salla SDK لا يزال يتم تهيئته. يرجى إعداد متجر سلة حقيقي في ملف البيئة (.env.local). راجع SALLA_SDK_SETUP_GUIDE.md للتعليمات.');
       }
       
       console.log('[DEBUG] Using Salla SDK for cart operation');

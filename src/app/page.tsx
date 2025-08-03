@@ -66,6 +66,23 @@ export default function Home() {
           </motion.div>
         </motion.div>
 
+        {/* Configuration Warning */}
+        <div className="mb-8 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-yellow-500">⚠️</span>
+            <h3 className="text-lg font-semibold text-yellow-500">تكوين المتجر مطلوب</h3>
+          </div>
+          <p className="text-sm text-muted-foreground mb-2">
+            يستخدم هذا التطبيق بيانات تجريبية. لاختبار وظائف السلة الحقيقية، يرجى:
+          </p>
+          <ol className="text-sm text-muted-foreground list-decimal list-inside space-y-1">
+            <li>إنشاء حساب في <a href="https://salla.partners" target="_blank" className="text-blue-400 hover:underline">بوابة شركاء سلة</a></li>
+            <li>إنشاء تطبيق ومتجر تجريبي</li>
+            <li>تحديث ملف <code className="bg-gray-800 px-1 rounded">.env.local</code> ببيانات المتجر الحقيقية</li>
+            <li>مراجعة <code className="bg-gray-800 px-1 rounded">SALLA_SDK_SETUP_GUIDE.md</code> للتعليمات التفصيلية</li>
+          </ol>
+        </div>
+
         {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           <AnimatedCard delay={0.1}>
