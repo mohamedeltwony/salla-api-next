@@ -124,81 +124,23 @@ class SallaCartService {
 
   // Get current cart
   async getCart(): Promise<SallaApiResponse<SallaCart>> {
-    console.log('[DEBUG] SallaCartService: Creating mock cart response for getCart');
+    console.log('[DEBUG] SallaCartService: Cart operations must be handled by Salla SDK on frontend');
     
-    // Mock implementation for testing - real cart operations should use Salla SDK
-    const mockCart: SallaCart = {
-      id: 'mock-cart-empty',
-      items: [],
-      total: {
-        amount: 0,
-        currency: 'SAR'
-      },
-      items_count: 0,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
-    
-    console.log('[DEBUG] SallaCartService: Mock empty cart returned');
-    
-    return {
-      status: 200,
-      success: true,
-      data: mockCart
-    };
+    // Cart operations are not available through backend APIs
+    // Customer cart functionality requires frontend Salla SDK integration
+    // with customer authentication and session management
+    throw new Error('Cart operations must be handled by Salla Twilight SDK on the frontend. Backend cart APIs are not available for customer operations.');
   }
 
   // Add item to cart
   async addToCart(productId: number, quantity: number, options?: Record<string, unknown>): Promise<SallaApiResponse<SallaCart>> {
-    console.log('[DEBUG] SallaCartService: Creating mock cart response for testing');
+    console.log('[DEBUG] SallaCartService: Cart operations must be handled by Salla SDK on frontend');
+    console.log('[DEBUG] Attempted to add product:', { productId, quantity, options });
     
-    // Mock implementation for testing - real cart operations should use Salla SDK
-    // This simulates a successful cart addition
-    const mockCartItem: SallaCartItem = {
-      id: Math.floor(Math.random() * 1000000),
-      product_id: productId,
-      product: {
-        id: productId,
-        name: `Product ${productId}`,
-        price: {
-          amount: 100,
-          currency: 'SAR'
-        },
-        images: [{
-          url: '/placeholder-product.jpg',
-          alt: 'Product Image'
-        }]
-      },
-      quantity: quantity,
-      price: {
-        amount: 100,
-        currency: 'SAR'
-      },
-      total: {
-        amount: 100 * quantity,
-        currency: 'SAR'
-      }
-    };
-    
-    const mockCart: SallaCart = {
-      id: 'mock-cart-' + Date.now(),
-      items: [mockCartItem],
-      total: {
-        amount: 100 * quantity,
-        currency: 'SAR'
-      },
-      items_count: 1,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
-    
-    console.log('[DEBUG] SallaCartService: Mock cart created successfully:', mockCart);
-    
-    return {
-      status: 200,
-      success: true,
-      data: mockCart
-    };
+    // Cart operations are not available through backend APIs
+    // Customer cart functionality requires frontend Salla SDK integration
+    // with customer authentication and session management
+    throw new Error('Cart operations must be handled by Salla Twilight SDK on the frontend. Backend cart APIs are not available for customer operations.');
   }
 
   // Update cart item quantity
