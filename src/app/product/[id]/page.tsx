@@ -86,64 +86,99 @@ export default function ProductPage() {
 
   const handleAddToCart = async () => {
     if (!product) {
-      alert('Product information is not available.');
+      console.error('[DEBUG] handleAddToCart: No product available');
       return;
     }
+    
+    console.log('[DEBUG] Starting add to cart process for product:', {
+      id: product.id,
+      name: product.name,
+      quantity: quantity
+    });
     
     setIsAddingToCart(true);
     
     try {
-      // Try using Salla SDK first (for storefront integration)
-      if (typeof window !== 'undefined' && (window as unknown as { salla?: unknown }).salla) {
+      // Check if Salla SDK is available
+      const hasSallaSDK = typeof window !== 'undefined' && (window as unknown as { salla?: unknown }).salla;
+      console.log('[DEBUG] Salla SDK availability:', {
+        windowExists: typeof window !== 'undefined',
+        sallaExists: hasSallaSDK,
+        userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'N/A'
+      });
+      
+      if (hasSallaSDK) {
+        console.log('[DEBUG] Attempting to use Salla SDK for cart operation');
         const salla = (window as unknown as { salla: { cart: { addItem: (options: Record<string, unknown>) => Promise<unknown>; event: { onItemAdded: (callback: (response: unknown) => void) => void; onItemAddedFailed: (callback: (error: unknown) => void) => void } } } }).salla;
         
-        const response = await salla.cart.addItem({
-          id: product.id,
-          quantity: quantity,
-          notes: "Added from product page"
-        });
-        
-        console.log('Product added to cart successfully via SDK:', response);
-        alert('Product added to cart successfully!');
-        
-        // Set up event listeners for cart events
+        // Set up event listeners before making the call
         salla.cart.event.onItemAdded((response: unknown) => {
-          console.log('Item added to cart:', response);
+          console.log('[DEBUG] Salla SDK: Item added successfully:', response);
+          alert('تم إضافة المنتج إلى السلة بنجاح!');
         });
         
         salla.cart.event.onItemAddedFailed((error: unknown) => {
           const errorMessage = typeof error === 'string' ? error : 'Unknown error';
-          console.error('Failed to add item to cart:', errorMessage);
-          alert('Failed to add item to cart: ' + errorMessage);
+          console.error('[DEBUG] Salla SDK: Failed to add item:', errorMessage);
+          alert('فشل في إضافة المنتج إلى السلة: ' + errorMessage);
         });
+        
+        const cartOptions = {
+          product_id: product.id,
+          quantity: quantity
+        };
+        console.log('[DEBUG] Calling salla.cart.addItem with options:', cartOptions);
+        
+        const response = await salla.cart.addItem(cartOptions);
+        console.log('[DEBUG] Salla SDK response:', response);
+        
       } else {
-        // Fallback to server-side API
-        console.log('Salla SDK not available, using server-side API');
+        console.log('[DEBUG] Salla SDK not available, using fallback API');
+        
+        const requestBody = {
+          product_id: product.id,
+          quantity: quantity
+        };
+        console.log('[DEBUG] API request body:', requestBody);
         
         const response = await fetch('/api/cart', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            product_id: product.id,
-            quantity: quantity,
-          }),
+          body: JSON.stringify(requestBody)
         });
         
+        console.log('[DEBUG] API response status:', response.status);
+        console.log('[DEBUG] API response headers:', Object.fromEntries(response.headers.entries()));
+        
         if (!response.ok) {
-          const errorData = await response.json() as { error?: string };
-          throw new Error(errorData.error || 'Failed to add product to cart');
+          const errorText = await response.text();
+          console.error('[DEBUG] API error response:', errorText);
+          
+          let errorData;
+          try {
+            errorData = JSON.parse(errorText) as { error?: string };
+          } catch {
+            errorData = { error: errorText };
+          }
+          
+          throw new Error(errorData.error || 'Failed to add item to cart');
         }
         
         const result = await response.json();
-        console.log('Product added to cart successfully via API:', result);
-        alert('Product added to cart successfully!');
+        console.log('[DEBUG] API success response:', result);
+        alert('تم إضافة المنتج إلى السلة بنجاح!');
       }
     } catch (error) {
-      console.error('Failed to add product to cart:', error);
-      alert('Failed to add product to cart. Please try again.');
+      console.error('[DEBUG] Error in handleAddToCart:', {
+        error: error,
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : 'No stack trace'
+      });
+      alert('فشل في إضافة المنتج إلى السلة: ' + (error instanceof Error ? error.message : 'خطأ غير معروف'));
     } finally {
+      console.log('[DEBUG] Add to cart process completed');
       setIsAddingToCart(false);
     }
   };

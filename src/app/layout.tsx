@@ -26,15 +26,24 @@ export default function RootLayout({
     <html lang="ar" dir="rtl" className="dark">
       <head>
         <script
+          src="https://cdn.salla.network/stores/twilight/js/salla.min.js"
+          async
+          onLoad={() => console.log('[DEBUG] Salla SDK loaded successfully')}
+          onError={() => console.error('[DEBUG] Failed to load Salla SDK - CORS or network error')}
+        ></script>
+        <script
           dangerouslySetInnerHTML={{
             __html: `
-              (function(s,a,l,l,a){
-                a=s.createElement('script');l=s.scripts[0];
-                a.async=1;a.src='https://cdn.salla.network/stores/twilight/js/salla.min.js';
-                a.onload=function(){salla.init()};
-                l.parentNode.insertBefore(a,l);
-              })(document);
-            `,
+              window.addEventListener('load', function() {
+                console.log('[DEBUG] Window loaded, checking Salla SDK availability');
+                if (window.salla) {
+                  console.log('[DEBUG] Salla SDK is available:', typeof window.salla);
+                  console.log('[DEBUG] Salla SDK methods:', Object.keys(window.salla));
+                } else {
+                  console.error('[DEBUG] Salla SDK is not available on window object');
+                }
+              });
+            `
           }}
         />
       </head>
