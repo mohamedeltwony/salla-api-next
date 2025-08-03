@@ -12,14 +12,30 @@ export interface SallaTokens {
 
 // Helper to find the correct KV environment variables
 function getKvCredentials() {
-  const prefixes = ['', 'STORAGE_'];
+  // Check for manually set environment variables first
+  if (process.env.MANUAL_KV_REST_API_URL && process.env.MANUAL_KV_REST_API_TOKEN) {
+    return {
+      url: process.env.MANUAL_KV_REST_API_URL,
+      token: process.env.MANUAL_KV_REST_API_TOKEN
+    };
+  }
+  
+  const prefixes = ['', 'STORAGE_', 'KV_', 'UPSTASH_'];
   for (const prefix of prefixes) {
-    const url = process.env[`${prefix}KV_REST_API_URL`];
-    const token = process.env[`${prefix}KV_REST_API_TOKEN`];
+    const url = process.env[`${prefix}KV_REST_API_URL`] || process.env[`${prefix}REST_API_URL`];
+    const token = process.env[`${prefix}KV_REST_API_TOKEN`] || process.env[`${prefix}REST_API_TOKEN`];
     if (url && token) {
+      console.log(`Found KV credentials with prefix: ${prefix}`);
       return { url, token };
     }
   }
+  
+  // Log all environment variables that contain 'KV' for debugging
+  console.log('Available KV-related environment variables:');
+  Object.keys(process.env).filter(key => key.includes('KV') || key.includes('UPSTASH')).forEach(key => {
+    console.log(`${key}: ${process.env[key] ? '[SET]' : '[NOT SET]'}`);
+  });
+  
   return null;
 }
 
