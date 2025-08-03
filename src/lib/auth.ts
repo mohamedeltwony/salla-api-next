@@ -12,30 +12,42 @@ export interface SallaTokens {
 
 // Helper to find the correct KV environment variables
 function getKvCredentials() {
+  // Log all environment variables for debugging
+  console.log('🔍 Checking all environment variables:');
+  console.log('KV_REST_API_URL:', process.env.KV_REST_API_URL ? '[SET]' : '[NOT SET]');
+  console.log('KV_REST_API_TOKEN:', process.env.KV_REST_API_TOKEN ? '[SET]' : '[NOT SET]');
+  console.log('KV_URL:', process.env.KV_URL ? '[SET]' : '[NOT SET]');
+  console.log('UPSTASH_REDIS_REST_URL:', process.env.UPSTASH_REDIS_REST_URL ? '[SET]' : '[NOT SET]');
+  console.log('UPSTASH_REDIS_REST_TOKEN:', process.env.UPSTASH_REDIS_REST_TOKEN ? '[SET]' : '[NOT SET]');
+  
   // Check for manually set environment variables first
   if (process.env.MANUAL_KV_REST_API_URL && process.env.MANUAL_KV_REST_API_TOKEN) {
+    console.log('✅ Using manual KV credentials');
     return {
       url: process.env.MANUAL_KV_REST_API_URL,
       token: process.env.MANUAL_KV_REST_API_TOKEN
     };
   }
   
-  const prefixes = ['', 'STORAGE_', 'KV_', 'UPSTASH_'];
-  for (const prefix of prefixes) {
-    const url = process.env[`${prefix}KV_REST_API_URL`] || process.env[`${prefix}REST_API_URL`];
-    const token = process.env[`${prefix}KV_REST_API_TOKEN`] || process.env[`${prefix}REST_API_TOKEN`];
-    if (url && token) {
-      console.log(`Found KV credentials with prefix: ${prefix}`);
-      return { url, token };
-    }
+  // Check for Vercel KV variables
+  if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+    console.log('✅ Using Vercel KV credentials');
+    return {
+      url: process.env.KV_REST_API_URL,
+      token: process.env.KV_REST_API_TOKEN
+    };
   }
   
-  // Log all environment variables that contain 'KV' for debugging
-  console.log('Available KV-related environment variables:');
-  Object.keys(process.env).filter(key => key.includes('KV') || key.includes('UPSTASH')).forEach(key => {
-    console.log(`${key}: ${process.env[key] ? '[SET]' : '[NOT SET]'}`);
-  });
+  // Check for Upstash Redis variables
+  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    console.log('✅ Using Upstash Redis credentials');
+    return {
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN
+    };
+  }
   
+  console.log('❌ No valid KV credentials found');
   return null;
 }
 
