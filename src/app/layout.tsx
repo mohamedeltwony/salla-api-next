@@ -25,27 +25,40 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" className="dark">
       <head>
+        <script src="https://cdn.jsdelivr.net/npm/@salla.sa/twilight@latest/dist/@salla.sa/twilight.min.js" async></script>
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              console.log('[DEBUG] Initializing Salla SDK loading');
+              console.log('[DEBUG] Initializing Salla SDK');
               
-              // Simple script loading without event handlers during SSR
-              if (typeof window !== 'undefined') {
-                var script = document.createElement('script');
-                script.src = 'https://cdn.salla.network/stores/twilight/js/salla.min.js';
-                script.async = true;
-                document.head.appendChild(script);
-                
-                // Check SDK availability after page load
-                setTimeout(function() {
-                  if (window.salla) {
-                    console.log('[DEBUG] Salla SDK loaded successfully');
+              // Initialize Salla SDK when DOM is ready
+              document.addEventListener('DOMContentLoaded', function() {
+                if (typeof salla !== 'undefined') {
+                  console.log('[DEBUG] Salla SDK found, initializing...');
+                  
+                  // Initialize with basic configuration
+                   salla.init({
+                     debug: true,
+                     language_code: 'ar',
+                     store: {
+                       // These should be replaced with actual store values
+                       id: '${process.env.NEXT_PUBLIC_SALLA_STORE_ID || 1}',
+                       url: '${process.env.NEXT_PUBLIC_SALLA_STORE_URL || 'https://demo-store.salla.sa'}'
+                     }
+                   });
+                  
+                  console.log('[DEBUG] Salla SDK initialized successfully');
+                  
+                  // Verify cart functionality is available
+                  if (salla.cart && salla.cart.addItem) {
+                    console.log('[DEBUG] Salla cart functionality is available');
                   } else {
-                    console.log('[DEBUG] Salla SDK not available - using API fallback');
+                    console.log('[DEBUG] Salla cart functionality not available');
                   }
-                }, 2000);
-              }
+                } else {
+                  console.error('[DEBUG] Salla SDK not loaded');
+                }
+              });
             `
           }}
         />
