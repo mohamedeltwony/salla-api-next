@@ -73,7 +73,7 @@ export default function Home() {
             <h3 className="text-lg font-semibold text-red-500">خطأ في المصادقة - مطلوب إعداد فوري</h3>
           </div>
           <p className="text-sm text-muted-foreground mb-2">
-            <strong>المشكلة:</strong> "Authentication failed: No valid access token available"
+            <strong>المشكلة:</strong> &quot;Authentication failed: No valid access token available&quot;
           </p>
           <p className="text-sm text-muted-foreground mb-2">
             <strong>السبب:</strong> لم يتم تكوين بيانات الاعتماد الحقيقية أو إكمال تدفق OAuth

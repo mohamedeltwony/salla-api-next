@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Shimmer } from "@/components/ui/shimmer";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import type { SallaCartResponse } from "@/types/salla";
 import {
   ArrowRight,
   ShoppingCart,
@@ -115,12 +116,12 @@ export default function ProductPage() {
       console.log('[DEBUG] Using Salla SDK for cart operation');
 
       // Set up event listeners before making the call (following best practices)
-      window.salla.cart.event.onItemAdded((response: any, product_id?: any) => {
+      window.salla.cart.event.onItemAdded((response: SallaCartResponse, product_id?: number | string) => {
         console.log('[DEBUG] Salla SDK: Item added successfully:', response, product_id);
         alert('تم إضافة المنتج إلى السلة بنجاح!');
       });
       
-      window.salla.cart.event.onItemAddedFailed((errorMessage: any, product_id?: any) => {
+      window.salla.cart.event.onItemAddedFailed((errorMessage: string | Error, product_id?: number | string) => {
         console.error('[DEBUG] Salla SDK: Failed to add item:', errorMessage, product_id);
         const message = typeof errorMessage === 'string' ? errorMessage : 'خطأ غير معروف';
         alert('فشل في إضافة المنتج إلى السلة: ' + message);

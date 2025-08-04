@@ -8,6 +8,7 @@ import { Button } from "./button";
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import type { SallaCartResponse } from "@/types/salla";
 
 interface ProductCardProps {
   product: SallaProduct;
@@ -48,12 +49,12 @@ export function ProductCard({ product, className, delay = 0 }: ProductCardProps)
     
     try {
       // Set up event listeners before making the call
-      window.salla.cart.event.onItemAdded((response: any, product_id: any) => {
+      window.salla.cart.event.onItemAdded((response: SallaCartResponse, product_id?: string | number) => {
         console.log('[DEBUG] Item added successfully:', response, product_id);
         alert('تم إضافة المنتج إلى السلة بنجاح!');
       });
       
-      window.salla.cart.event.onItemAddedFailed((errorMessage: any, product_id: any) => {
+      window.salla.cart.event.onItemAddedFailed((errorMessage: string | Error, product_id?: string | number) => {
         console.error('[DEBUG] Failed to add item:', errorMessage, product_id);
         const message = typeof errorMessage === 'string' ? errorMessage : 'خطأ غير معروف';
         alert('فشل في إضافة المنتج إلى السلة: ' + message);

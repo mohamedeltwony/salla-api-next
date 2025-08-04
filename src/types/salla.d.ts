@@ -1,17 +1,23 @@
 // Salla SDK Type Declarations
 
+export interface SallaCartResponse {
+  success: boolean;
+  data?: unknown;
+  message?: string;
+}
+
 interface SallaCartEventHandlers {
-  onItemAdded: (callback: (response: any, product_id?: any) => void) => void;
-  onItemAddedFailed: (callback: (errorMessage: any, product_id?: any) => void) => void;
+  onItemAdded: (callback: (response: SallaCartResponse, product_id?: number | string) => void) => void;
+  onItemAddedFailed: (callback: (errorMessage: string | Error, product_id?: number | string) => void) => void;
 }
 
 interface SallaCart {
   addItem: (options: {
     id: number;
     quantity: number;
-    options?: Record<string, any>;
+    options?: Record<string, unknown>;
     notes?: string;
-  }) => Promise<any>;
+  }) => Promise<SallaCartResponse>;
   event: SallaCartEventHandlers;
 }
 
