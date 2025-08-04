@@ -169,6 +169,24 @@ NEXT_PUBLIC_SALLA_STORE_URL=https://your-actual-demo-store-name.salla.sa
 
 #### Step 3: Update Your `.env.local` File
 Replace the placeholder values with your real credentials:
+
+**For Vercel Deployment (`https://salla-test-app.vercel.app/`):**
+```env
+# Replace these with your REAL Salla app credentials
+SALLA_CLIENT_ID=salla_your_real_client_id
+SALLA_CLIENT_SECRET=sk_your_real_client_secret
+SALLA_REDIRECT_URI=https://salla-test-app.vercel.app/auth/callback
+
+# Replace with your REAL Upstash Redis credentials
+UPSTASH_REDIS_REST_URL=https://your-database-name.upstash.io
+UPSTASH_REDIS_REST_TOKEN=AXXXyour_real_token
+
+# Keep these for now (will update after OAuth)
+NEXT_PUBLIC_SALLA_STORE_ID=1305146709
+NEXT_PUBLIC_SALLA_STORE_URL=https://demo-store.salla.sa
+```
+
+**For Local Development:**
 ```env
 # Replace these with your REAL Salla app credentials
 SALLA_CLIENT_ID=salla_your_real_client_id
@@ -184,14 +202,32 @@ NEXT_PUBLIC_SALLA_STORE_ID=1305146709
 NEXT_PUBLIC_SALLA_STORE_URL=https://demo-store.salla.sa
 ```
 
-#### Step 4: Complete OAuth Flow
+#### Step 4: Configure Salla App Redirect URI
+**IMPORTANT**: In your Salla Partners Portal app settings, add the redirect URI:
+- **For Vercel**: `https://salla-test-app.vercel.app/auth/callback`
+- **For Local**: `http://localhost:3000/auth/callback`
+
+#### Step 5: Complete OAuth Flow
+**For Vercel Deployment:**
+1. Deploy your updated environment variables to Vercel
+2. Visit: `https://salla-test-app.vercel.app/auth/salla`
+3. Authorize your app with Salla
+4. You'll be redirected back with access tokens stored
+
+**For Local Development:**
 1. Save your `.env.local` file
 2. Restart your development server: `npm run dev`
 3. Visit: `http://localhost:3000/auth/salla`
 4. Authorize your app with Salla
 5. You'll be redirected back with access tokens stored
 
-#### Step 5: Test the Application
+#### Step 6: Test the Application
+**For Vercel:**
+1. Visit `https://salla-test-app.vercel.app/`
+2. You should now see real products loading
+3. Cart functionality will work with your authorized store
+
+**For Local:**
 1. Visit `http://localhost:3000`
 2. You should now see real products loading
 3. Cart functionality will work with your authorized store
@@ -199,8 +235,16 @@ NEXT_PUBLIC_SALLA_STORE_URL=https://demo-store.salla.sa
 ### ⚠️ **Important Notes:**
 - **Don't skip the OAuth step** - this is what gets your access tokens
 - **Use real credentials** - placeholder values will never work
-- **Restart the server** after updating `.env.local`
+- **For Vercel**: Set environment variables in Vercel Dashboard → Project Settings → Environment Variables
+- **For Local**: Update `.env.local` file and restart the server
+- **Redirect URI**: Must match exactly in both Salla app settings and environment variables
 - **Check the console** for any remaining errors
+
+### 🚀 **Vercel Deployment Notes:**
+- Environment variables must be set in Vercel Dashboard, not just `.env.local`
+- After updating environment variables, redeploy the application
+- Use the Vercel domain (`https://salla-test-app.vercel.app`) for all OAuth URLs
+- Ensure your Salla app is configured with the correct Vercel redirect URI
 
 ---
 
