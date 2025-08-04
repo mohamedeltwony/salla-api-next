@@ -175,7 +175,7 @@ Replace the placeholder values with your real credentials:
 # Replace these with your REAL Salla app credentials
 SALLA_CLIENT_ID=salla_your_real_client_id
 SALLA_CLIENT_SECRET=sk_your_real_client_secret
-SALLA_REDIRECT_URI=https://salla-test-app.vercel.app/auth/callback
+SALLA_REDIRECT_URI=https://salla-test-app.vercel.app/api/webhook/salla
 
 # Replace with your REAL Upstash Redis credentials
 UPSTASH_REDIS_REST_URL=https://your-database-name.upstash.io
@@ -191,7 +191,7 @@ NEXT_PUBLIC_SALLA_STORE_URL=https://demo-store.salla.sa
 # Replace these with your REAL Salla app credentials
 SALLA_CLIENT_ID=salla_your_real_client_id
 SALLA_CLIENT_SECRET=sk_your_real_client_secret
-SALLA_REDIRECT_URI=http://localhost:3000/auth/callback
+SALLA_REDIRECT_URI=http://localhost:3000/api/webhook/salla
 
 # Replace with your REAL Upstash Redis credentials
 UPSTASH_REDIS_REST_URL=https://your-database-name.upstash.io
@@ -204,22 +204,22 @@ NEXT_PUBLIC_SALLA_STORE_URL=https://demo-store.salla.sa
 
 #### Step 4: Configure Salla App Redirect URI
 **IMPORTANT**: In your Salla Partners Portal app settings, add the redirect URI:
-- **For Vercel**: `https://salla-test-app.vercel.app/auth/callback`
-- **For Local**: `http://localhost:3000/auth/callback`
+- **For Vercel**: `https://salla-test-app.vercel.app/api/webhook/salla`
+- **For Local**: `http://localhost:3000/api/webhook/salla`
 
 #### Step 5: Complete OAuth Flow
 **For Vercel Deployment:**
 1. Deploy your updated environment variables to Vercel
-2. Visit: `https://salla-test-app.vercel.app/auth/salla`
+2. Visit: `https://salla-test-app.vercel.app/auth`
 3. Authorize your app with Salla
-4. You'll be redirected back with access tokens stored
+4. You'll be redirected back to `/api/webhook/salla` with access tokens stored
 
 **For Local Development:**
 1. Save your `.env.local` file
 2. Restart your development server: `npm run dev`
-3. Visit: `http://localhost:3000/auth/salla`
+3. Visit: `http://localhost:3000/auth`
 4. Authorize your app with Salla
-5. You'll be redirected back with access tokens stored
+5. You'll be redirected back to `/api/webhook/salla` with access tokens stored
 
 #### Step 6: Test the Application
 **For Vercel:**
@@ -247,6 +247,31 @@ NEXT_PUBLIC_SALLA_STORE_URL=https://demo-store.salla.sa
 - Ensure your Salla app is configured with the correct Vercel redirect URI
 
 ---
+
+## 🔄 **Authentication Flow URLs**
+
+### ✅ **CORRECT URLs for OAuth Authentication:**
+
+**To Start OAuth Flow:**
+- **Vercel**: `https://salla-test-app.vercel.app/auth`
+- **Local**: `http://localhost:3000/auth`
+
+**OAuth Callback Endpoint (configured in Salla Partners Portal):**
+- **Vercel**: `https://salla-test-app.vercel.app/api/webhook/salla`
+- **Local**: `http://localhost:3000/api/webhook/salla`
+
+### ❌ **INCORRECT URLs (will return 404):**
+- `/auth/salla` - This route does not exist
+- `/auth/callback` - This route does not exist
+
+### 📋 **Authentication Flow Process:**
+1. User visits `/auth` page
+2. Clicks "Authorize with Salla" button
+3. Redirected to Salla's authorization server
+4. After authorization, Salla redirects back to `/api/webhook/salla`
+5. The webhook endpoint exchanges the code for access tokens
+6. Tokens are saved to Redis/KV storage
+7. User is redirected back to the homepage
 
 ## 🔗 **Useful Resources**
 
