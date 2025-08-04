@@ -100,47 +100,41 @@ export default function ProductPage() {
     
     try {
       // Check if Salla SDK is available
-      const hasSallaSDK = typeof window !== 'undefined' && (window as unknown as { salla?: unknown }).salla;
-      const isSDKReady = typeof window !== 'undefined' && (window as unknown as { sallaSDKReady?: boolean }).sallaSDKReady;
-      
-      console.log('[DEBUG] Salla SDK availability:', {
-        windowExists: typeof window !== 'undefined',
-        sallaExists: hasSallaSDK,
-        sdkReady: isSDKReady,
-        userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'N/A'
-      });
-      
-      if (!hasSallaSDK) {
-        throw new Error('Salla SDK غير محمل. يرجى إعداد متجر سلة حقيقي في ملف البيئة (.env.local). راجع SALLA_SDK_SETUP_GUIDE.md للتعليمات.');
+      if (typeof window === 'undefined' || !window.salla) {
+        console.error('[DEBUG] Salla SDK not available');
+        alert('خدمة السلة غير متاحة حالياً');
+        return;
       }
-      
-      if (!isSDKReady) {
-        throw new Error('Salla SDK لا يزال يتم تهيئته. يرجى إعداد متجر سلة حقيقي في ملف البيئة (.env.local). راجع SALLA_SDK_SETUP_GUIDE.md للتعليمات.');
+
+      if (!window.sallaSDKReady) {
+        console.error('[DEBUG] Salla SDK not ready');
+        alert('خدمة السلة لا تزال قيد التحميل، يرجى المحاولة مرة أخرى');
+        return;
       }
-      
+
       console.log('[DEBUG] Using Salla SDK for cart operation');
-      const salla = (window as unknown as { salla: { cart: { addItem: (options: Record<string, unknown>) => Promise<unknown>; event: { onItemAdded: (callback: (response: unknown) => void) => void; onItemAddedFailed: (callback: (error: unknown) => void) => void } } } }).salla;
-      
-      // Set up event listeners before making the call
-      salla.cart.event.onItemAdded((response: unknown) => {
-        console.log('[DEBUG] Salla SDK: Item added successfully:', response);
+
+      // Set up event listeners before making the call (following best practices)
+      window.salla.cart.event.onItemAdded((response: any, product_id?: any) => {
+        console.log('[DEBUG] Salla SDK: Item added successfully:', response, product_id);
         alert('تم إضافة المنتج إلى السلة بنجاح!');
       });
       
-      salla.cart.event.onItemAddedFailed((error: unknown) => {
-        const errorMessage = typeof error === 'string' ? error : 'Unknown error';
-        console.error('[DEBUG] Salla SDK: Failed to add item:', errorMessage);
-        alert('فشل في إضافة المنتج إلى السلة: ' + errorMessage);
+      window.salla.cart.event.onItemAddedFailed((errorMessage: any, product_id?: any) => {
+        console.error('[DEBUG] Salla SDK: Failed to add item:', errorMessage, product_id);
+        const message = typeof errorMessage === 'string' ? errorMessage : 'خطأ غير معروف';
+        alert('فشل في إضافة المنتج إلى السلة: ' + message);
       });
       
+      // Prepare cart options following Salla SDK documentation
       const cartOptions = {
-        id: product.id, // Use 'id' instead of 'product_id' for Salla SDK
+        id: product.id,
         quantity: quantity,
         notes: "Added from product page"
       };
-      console.log('[DEBUG] Calling salla.cart.addItem with options:', cartOptions);
       
-      const response = await salla.cart.addItem(cartOptions);
+      console.log('[DEBUG] Calling salla.cart.addItem with options:', cartOptions);
+      const response = await window.salla.cart.addItem(cartOptions);
       console.log('[DEBUG] Salla SDK response:', response);
     } catch (error) {
       console.error('[DEBUG] Error in handleAddToCart:', {
