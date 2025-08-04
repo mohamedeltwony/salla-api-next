@@ -16,9 +16,24 @@ interface AuthStatus {
   error?: string;
 }
 
+interface StoreInfo {
+  success: boolean;
+  store?: {
+    id: number;
+    name: string;
+    domain: string;
+    url: string;
+  };
+  storeUrl?: string;
+  storeId?: number;
+  error?: string;
+}
+
 export default function AuthStatusFloat() {
   const [authStatus, setAuthStatus] = useState<AuthStatus | null>(null);
+  const [storeInfo, setStoreInfo] = useState<StoreInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingStore, setIsLoadingStore] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
 
   const checkAuthStatus = async () => {
@@ -27,6 +42,11 @@ export default function AuthStatusFloat() {
       const response = await fetch('/api/auth/status');
       const data = await response.json();
       setAuthStatus(data);
+      
+      // If authenticated, also fetch store info
+      if (data.authenticated) {
+        await fetchStoreInfo();
+      }
     } catch (error) {
       console.error('Error checking auth status:', error);
       setAuthStatus({
@@ -36,6 +56,23 @@ export default function AuthStatusFloat() {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchStoreInfo = async () => {
+    setIsLoadingStore(true);
+    try {
+      const response = await fetch('/api/store/info');
+      const data = await response.json();
+      setStoreInfo(data);
+    } catch (error) {
+      console.error('Error fetching store info:', error);
+      setStoreInfo({
+        success: false,
+        error: 'Failed to fetch store information'
+      });
+    } finally {
+      setIsLoadingStore(false);
     }
   };
 
@@ -106,14 +143,38 @@ export default function AuthStatusFloat() {
         </div>
       )}
       
+      {storeInfo?.store && (
+        <div className="text-xs text-gray-500 space-y-1 mb-3 border-t pt-2">
+          <div><strong>Store:</strong> {storeInfo.store.name}</div>
+          <div><strong>URL:</strong> {storeInfo.store.domain || storeInfo.store.url}</div>
+          <div><strong>ID:</strong> {storeInfo.store.id}</div>
+        </div>
+      )}
+      
+      {storeInfo?.error && (
+        <div className="text-xs text-red-600 bg-red-100 p-2 rounded mb-3">
+          Store Error: {storeInfo.error}
+        </div>
+      )}
+      
       <div className="flex gap-2">
         <button
           onClick={checkAuthStatus}
-          disabled={isLoading}
+          disabled={isLoading || isLoadingStore}
           className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-xs py-1 px-2 rounded transition-colors"
         >
-          {isLoading ? 'Checking...' : 'Refresh'}
+          {isLoading || isLoadingStore ? 'Loading...' : 'Refresh'}
         </button>
+        
+        {authStatus?.authenticated && (
+          <button
+            onClick={fetchStoreInfo}
+            disabled={isLoadingStore}
+            className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white text-xs py-1 px-2 rounded transition-colors"
+          >
+            {isLoadingStore ? 'Loading...' : 'Store Info'}
+          </button>
+        )}
         
         {authStatus?.needsAuth && (
           <button
