@@ -14,7 +14,7 @@ export async function GET() {
     }
 
     // Fetch store information from Salla API
-    const response = await fetch('https://api.salla.dev/admin/v2/store', {
+    const response = await fetch('https://api.salla.dev/admin/v2/store/info', {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'Accept': 'application/json',
