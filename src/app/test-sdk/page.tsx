@@ -1,18 +1,18 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { Loader2, Package, Store, Users, ShoppingBag, RefreshCw } from 'lucide-react';
-import { sallaApi, SallaProduct, SallaCategory } from '@/services/salla-api';
+import { sallaApi } from '@/services/salla-api';
 import Link from 'next/link';
 
 interface TestResult {
   name: string;
   status: 'loading' | 'success' | 'error';
-  data?: any;
+  data?: Record<string, unknown>;
   error?: string;
   duration?: number;
 }
@@ -32,7 +32,7 @@ export default function TestSDKPage() {
     });
   };
 
-  const runTest = async (name: string, testFn: () => Promise<any>) => {
+  const runTest = async (name: string, testFn: () => Promise<Record<string, unknown>>) => {
     const startTime = Date.now();
     updateTest(name, { status: 'loading' });
     
@@ -100,18 +100,21 @@ export default function TestSDKPage() {
 
     // Test 4: Get Single Product (if products exist)
     const productsTest = tests.find(t => t.name === 'Get Products');
-    if (productsTest && productsTest.status === 'success' && productsTest.data?.products?.length > 0) {
-      const productId = productsTest.data.products[0].id;
-      await runTest('Get Single Product', async () => {
-        const response = await sallaApi.getProduct(productId);
-        return {
-          id: response.data.id,
-          name: response.data.name,
-          description: response.data.description?.substring(0, 100) + '...',
-          images: response.data.images?.length || 0,
-          categories: response.data.categories?.length || 0
-        };
-      });
+    if (productsTest && productsTest.status === 'success' && productsTest.data) {
+      const products = (productsTest.data as { products?: Array<{ id: number }> }).products;
+      if (products && products.length > 0) {
+        const productId = products[0].id;
+        await runTest('Get Single Product', async () => {
+          const response = await sallaApi.getProduct(productId);
+          return {
+            id: response.data.id,
+            name: response.data.name,
+            description: response.data.description?.substring(0, 100) + '...',
+            images: response.data.images?.length || 0,
+            categories: response.data.categories?.length || 0
+          };
+        });
+      }
     }
 
     setIsRunning(false);
@@ -218,7 +221,7 @@ export default function TestSDKPage() {
                     <div className="space-y-3">
                       <div className="text-green-600 font-medium">نجح الاختبار ✅</div>
                       <pre className="bg-muted p-4 rounded-lg text-sm overflow-auto max-h-64">
-                        {JSON.stringify(test.data, null, 2)}
+                        {JSON.stringify(test.data || {}, null, 2)}
                       </pre>
                     </div>
                   )}
