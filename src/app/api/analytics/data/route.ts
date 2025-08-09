@@ -79,7 +79,7 @@ function parseDate(dateStr: string): string {
 
 export async function GET() {
   try {
-    const csvPath = path.join(process.cwd(), '2589daec-f7a5-40d7-92ba-828505b3fe1f.csv');
+    const csvPath = path.join(process.cwd(), 'public', '2589daec-f7a5-40d7-92ba-828505b3fe1f.csv');
     const csvContent = await fs.readFile(csvPath, 'utf-8');
     
     const lines = csvContent.split('\n').filter(line => line.trim() !== '');
