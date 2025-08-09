@@ -151,8 +151,8 @@ export default function AnalyticsPage() {
     };
   }, [orders]);
 
-  const uniqueStatuses = [...new Set(orders.map(order => order.orderStatus))];
-  const uniqueCities = [...new Set(orders.map(order => order.city))].sort();
+  const uniqueStatuses = [...new Set(orders.map(order => order.orderStatus))].filter(status => status && status.trim() !== '');
+  const uniqueCities = [...new Set(orders.map(order => order.city))].filter(city => city && city.trim() !== '').sort();
 
   if (loading) {
     return (
